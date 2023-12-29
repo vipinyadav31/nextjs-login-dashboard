@@ -1,89 +1,132 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 import axios from "axios";
 import styles from "./../page.module.css";
-import { DesktopOutlined, UserOutlined } from "@ant-design/icons";
-import { Layout, Menu, theme, Row, Table } from "antd";
+import {
+    DeleteOutlined,
+    DesktopOutlined,
+    EditOutlined,
+} from "@ant-design/icons";
+import { Layout, Menu, theme, Row, Table, Popconfirm, message } from "antd";
 import { Button } from "antd/es/radio";
 import Index from "./Index";
+import Edites from "./Edites";
 const { Header, Content, Sider } = Layout;
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-// function getItem(label, key, icon, children) {
-//     return {
-//         key,
-//         icon,
-//         children,
-//         label,
-//     };
-// }
-// const items = [getItem("Users", "1", <DesktopOutlined />),
-// getItem('Option 2', '2', <DesktopOutlined />, '/option2'), // Add the path '/option2' for example
-
-//   getItem('Option 2', '2', <DesktopOutlined />,null , '/users' 	),
-// ];
-const columns = [
-    {
-        title: "Name",
-        dataIndex: "name",
-        key: "name",
-        align: "center",
-    },
-    {
-        title: "Email",
-        dataIndex: "email",
-        key: "email",
-        align: "center",
-    },
-    {
-        title: "Phone",
-        dataIndex: "phone",
-        key: "key",
-        align: "center",
-    },
-    {
-        title: "Organization Name",
-        dataIndex: "organizationName",
-        key: "organizationName",
-        align: "center",
-    },
-];
 const App = () => {
     const router = useRouter();
-
+    const deleteButtonRef = useRef(null);
+    console.log(deleteButtonRef);
     const [apiData, setApiData] = useState([]);
+    // console.log(apiData, "jjjj")
     const [collapsed, setCollapsed] = useState(false);
     const [signUpCall, setSignUpCall] = useState(false);
+    const [editRequest, setEditRequest] = useState(false);
+    const [editId, setEditId] = useState("");
+    const [geted, setGeted] = useState("");
+
+    const isloggedIn = localStorage.getItem("token");
+    if (!isloggedIn) {
+        router.push("/");
+    }
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await axios.get(
-                    "https://staging-api.zesthrm.com/api/v1/customer/contacts-list"
+                    "https://65682d079927836bd9742fb2.mockapi.io/usersData"
                 );
-                const dataWithKeys = response.data.data.map((item) => ({
-                    ...item,
-                    key: item.id,
-                }));
-                setApiData(dataWithKeys);
-
-                // setApiData(response.data.data);
+                setApiData(response.data);
             } catch (error) {
                 console.log(error);
             }
         };
         fetchData();
-    }, [signUpCall]);
-    console.log(apiData);
+    }, [signUpCall, geted, editRequest]);
+
+    const confirm = async (id) => {
+        console.log(id);
+        const response = await axios.delete(
+            `https://65682d079927836bd9742fb2.mockapi.io/usersData/${id}`
+        );
+        setGeted(response);
+        message.success("user deleted successfully ");
+    };
+    const cancel = (e) => {
+        console.log(e);
+    };
+
+    const columns = [
+        {
+            title: "Name",
+            dataIndex: "name",
+            key: "name",
+            align: "center",
+        },
+        {
+            title: "Email",
+            dataIndex: "email",
+            key: "email",
+            align: "center",
+        },
+        {
+            title: "Phone",
+            dataIndex: "phone",
+            key: "phone",
+            align: "center",
+        },
+        {
+            title: "Action",
+            dataIndex: "id",
+            width: "15%",
+            key: "id",
+            render: (id) => (
+                <div>
+                    <Button
+                        onClick={() => {
+                            setEditRequest(true);
+                            setEditId(id);
+                        }}
+                    >
+                        <EditOutlined />
+                    </Button>
+                    <Popconfirm
+                        // ref={id}
+                        ref={deleteButtonRef}
+                        title="Delete users"
+                        description="Are you sure to delete this users?"
+                        onConfirm={() => confirm(id)}
+                        onCancel={cancel}
+                        okText="Yes"
+                        cancelText="No"
+                    >
+                        <Button
+                            // ref={deleteButtonRef}
+                            style={{
+                                margin: "10px 0px 0px 10px",
+                            }}
+                        >
+                            <DeleteOutlined
+                                style={{
+                                    color: "red",
+                                }}
+                            />
+                        </Button>
+                    </Popconfirm>
+                </div>
+            ),
+        },
+    ];
 
     const {
         token: { colorBgContainer },
     } = theme.useToken();
     const onClose = () => {
         setSignUpCall(false);
-        // fetchData();
+        setEditRequest(false);
     };
+
     return (
         <div className={styles.parent}>
             <Layout style={{ minHeight: "100%" }}>
@@ -97,11 +140,6 @@ const App = () => {
                     </h3>
                     <div className="demo-logo-vertical" />
                     <Menu
-                        onClick={(key) => {
-                            if (key === "users") {
-                                router.push(`/users`);
-                            }
-                        }}
                         theme="dark"
                         defaultSelectedKeys={["1"]}
                         mode="inline"
@@ -111,11 +149,8 @@ const App = () => {
                                 icon: <DesktopOutlined />,
                                 label: "desktop",
                             },
-                            
                         ]}
-                    >
-                        
-                    </Menu>
+                    ></Menu>
                 </Sider>
                 <Layout>
                     <Header
@@ -140,7 +175,7 @@ const App = () => {
                                 style={{
                                     backgroundColor: "black",
                                     color: "white",
-                                    marginRight: "3.75rem",
+                                    marginRight: "8vw",
                                 }}
                                 type="primary"
                                 onClick={() => setSignUpCall(true)}
@@ -150,19 +185,24 @@ const App = () => {
                         </Row>
                         <Row justify="center">
                             <Table
-                                style={{ width: "90%" }}
+                                style={{ width: "80%" }}
                                 pagination={false}
                                 dataSource={apiData}
                                 columns={columns}
                                 scroll={{ x: true }}
                                 bordered
-                                
+                                rowKey={(keys) => keys.id}
                             />
                         </Row>
                         <Row></Row>
                     </Content>
                 </Layout>
                 <Index isShow={signUpCall} handleCancel={onClose} />
+                <Edites
+                    isShow={editRequest}
+                    handleCancel={onClose}
+                    id={editId}
+                />
             </Layout>
         </div>
     );

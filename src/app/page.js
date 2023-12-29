@@ -18,10 +18,12 @@ export default function Home() {
                 }
             );
             console.log(response);
-            console.log(response.data.token);
-
-            message.success("Login successfully");
-            router.push(`/dashboard`);
+            localStorage.setItem("token", response.data.token);
+            const isloggedIn = response.data.token;
+            if (isloggedIn) {
+                message.success("Login successfully");
+                router.push(`/dashboard`);
+            }
         } catch (error) {
             message.error(` Email is not registered with us. Try signup. `);
         }
@@ -29,7 +31,7 @@ export default function Home() {
     const onFinishFailed = (errorInfo) => {
         console.log("Failed:", errorInfo);
     };
-
+    console.log(localStorage.getItem("token"));
     return (
         <main className={styles.body}>
             <div className={styles.main}>

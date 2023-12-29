@@ -10,7 +10,7 @@ const Index = ({ isShow, handleCancel }) => {
         try {
             console.log(values);
             const response = await axios.post(
-                "https://staging-api.zesthrm.com/api/v1/customer/contact",
+                "https://65682d079927836bd9742fb2.mockapi.io/usersData",
                 values
             );
              
@@ -34,7 +34,6 @@ const Index = ({ isShow, handleCancel }) => {
                     handleCancel();
                 }}
             >
-                {/* from ant start */}
                 <Form
                    layout="vertical"
 
@@ -68,7 +67,6 @@ const Index = ({ isShow, handleCancel }) => {
                         rules={[
                             {
                                 required: true,
-                                // type: "email",
                                 message: "Please enter your email!",
                             },
                             {
@@ -80,7 +78,7 @@ const Index = ({ isShow, handleCancel }) => {
                         <Input />
                     </Form.Item>
                     </Col>
-                    <Col md={12}>
+                    <Col md={16}>
                     <Form.Item
                         label="Phone number"
                         name="phone"
@@ -94,24 +92,8 @@ const Index = ({ isShow, handleCancel }) => {
                         <Input />
                     </Form.Item>
                     </Col>
-                    <Col md={12}>
-                    <Form.Item
-                        label="Organization name "
-                        name="organizationName"
-                        rules={[
-                            {
-                                required: true,
-                                message:
-                                    "Please enter your Organization name !",
-                            },
-                        ]}
-                    >
-                        <Input />
-                    </Form.Item>
-                    </Col>
                     </Row>
                 </Form>
-                {/* from ant end  */}
             </Modal>
         </div>
     );

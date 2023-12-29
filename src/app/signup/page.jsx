@@ -2,10 +2,8 @@
 import Link from "next/link";
 import styles from "../page.module.css";
 import React, { useState } from "react";
-import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { message } from "antd";
-
 import axios from "axios";
 import {
     Steps,
@@ -22,14 +20,12 @@ import {
 const { Option } = Select;
 const { Step } = Steps;
 
-//main fuction start
 const SignUp = () => {
     const [form] = Form.useForm();
     const [currentStep, setCurrentStep] = useState(0);
     const [orgDetails, setOrgDetails] = useState("");
     const router = useRouter();
     console.log("currentStep", currentStep);
-
     const onFinish = async (values) => {
         try {
             if (currentStep === 0) {
@@ -66,8 +62,6 @@ const SignUp = () => {
                         },
                     },
                 };
-
-                // Make the API call
                 await axios.post(
                     "https://staging-api.zesthrm.com/api/v1/customer/create",
                     payload
@@ -76,7 +70,6 @@ const SignUp = () => {
                 router.push("/");
             }
         } catch (error) {
-            // Handle errors
             message.error(
                 "An error occurred. Please try again or contact support."
             );
@@ -99,7 +92,6 @@ const SignUp = () => {
         </Form.Item>
     );
 
-    // main function return here
     return (
         <div className={styles.signup}>
             <div className={styles.main}>
@@ -209,7 +201,6 @@ const SignUp = () => {
                                 >
                                     <Input placeholder="PAN" />
                                 </Form.Item>
-                                {/*  */}
                             </Col>
                             <Col md={12}>
                                 <Form.Item
@@ -303,12 +294,10 @@ const SignUp = () => {
                         </h6>
                     </Form>
                 )}
-                {/* parsnaol detatil */}
                 {currentStep === 1 && (
                     <Form
                         layout="vertical"
                         className=" U_formclass bg-white  rounded-4 mt-5"
-                        // {...formItemLayout}
                         form={form}
                         name="register"
                         onFinish={onFinish}
@@ -349,12 +338,11 @@ const SignUp = () => {
                                         {
                                             type: "email",
                                             message:
-                                                "The enter is not valid E-mail!",
+                                                "The enter is not valid E-mail",
                                         },
                                         {
                                             required: true,
-                                            message:
-                                                "Please enter your E-mail!",
+                                            message: "Please enter your E-mail",
                                         },
                                     ]}
                                 >
@@ -369,7 +357,7 @@ const SignUp = () => {
                                         {
                                             required: true,
                                             message:
-                                                "Please enter your phone number!",
+                                                "Please enter your phone number",
                                         },
                                     ]}
                                 >
@@ -390,7 +378,7 @@ const SignUp = () => {
                                         {
                                             required: true,
                                             message:
-                                                "Please select your date of birth!",
+                                                "Please select your date of birth",
                                         },
                                     ]}
                                 >
@@ -420,7 +408,7 @@ const SignUp = () => {
                                     rules={[
                                         {
                                             // required: true,
-                                            message: "Please Enter  your city!",
+                                            message: "Please Enter  your city",
                                         },
                                     ]}
                                 >
@@ -455,29 +443,24 @@ const SignUp = () => {
                             </Form.Item>
                         </Row>
                         <Form.Item>
-                            <Checkbox>
+                            <Checkbox required>
                                 I agree to the
-                                <Link href="/contitions">
+                                <Link href="/contitions" target="blank">
                                     terms & condititions
                                 </Link>
                             </Checkbox>
                         </Form.Item>
                         <Row>
-                            <Col md={16}>
-                                <ArrowLeftOutlined
-                                    onClick={() => setCurrentStep(1)}
-                                />
-                            </Col>
                             <Col>
                                 <Form.Item>
                                     <Button
                                         type="default"
-                                        className="mt-3"
+                                        // className="mt-3"
                                         htmlType="submit"
                                         style={{
                                             backgroundColor: "black",
                                             color: "white",
-                                            width: "100%",
+                                            // width: "%",
                                         }}
                                     >
                                         Complete Registration
